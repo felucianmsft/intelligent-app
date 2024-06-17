@@ -1,0 +1,289 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "## A/B Experiment: Prompt Variation\nDetails on prompt versions used for this experiment at this link https://github.com/felucianmsft/intelligent-app/blob/main/experiments/prompting-fewshot.md\n"
+      },
+      "name": "text - 2"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "//AB TESTING average score by prompt version\ncustomEvents\n| where isnotempty(tostring(customDimensions.topic)) and isnotempty(tostring(customDimensions.PromptTemplateVersion))\n| summarize [\"Sentiment Score\"]=round(avg(todecimal(customDimensions.questionSentiment)),2), [\"Fluency Score\"]=round(avg(todecimal(customDimensions.fluencyScore)),2),  [\"Confidence Score\"]=round(avg(todecimal(customDimensions.answerConfidence)),2) by Topic=tostring(customDimensions.topic), Prompt=tostring(customDimensions.PromptTemplateVersion) \n| where Topic in (\"flightSearch\",\"flightBookingComplete\",\"flightBooking\") \n| sort by Topic",
+              "size": 1,
+              "title": "Score by Prompt Version - Topic",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            },
+            "customWidth": "60",
+            "name": "query - 2",
+            "styleSettings": {
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "//AB TESTING average score by prompt version\r\ncustomEvents\r\n| where isnotempty(tostring(customDimensions.topic)) and tostring(customDimensions.PromptTemplateVersion) == \"1.0.0\"\r\n| summarize [\"Sentiment Score\"]=round(avg(todecimal(customDimensions.questionSentiment)),2), [\"Fluency Score\"]=round(avg(todecimal(customDimensions.fluencyScore)),2),  [\"Confidence Score\"]=round(avg(todecimal(customDimensions.answerConfidence)),2) by Topic=tostring(customDimensions.topic)\r\n| where Topic in (\"flightSearch\",\"flightBookingComplete\",\"flightBooking\") \r\n| sort by Topic",
+              "size": 1,
+              "title": "Sentiment Score v=1.0.0",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "visualization": "tiles",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "Prompt",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 0,
+                    "options": {
+                      "style": "decimal"
+                    }
+                  }
+                },
+                "subtitleContent": {
+                  "columnMatch": "Topic"
+                },
+                "leftContent": {
+                  "columnMatch": "Sentiment Score",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                },
+                "showBorder": true
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Prompt",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "Sentiment Score",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "Sentiment Score",
+                "sizeAggregation": "Sum",
+                "legendMetric": "Sentiment Score",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "Sentiment Score",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "customWidth": "15",
+            "name": "query - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "//AB TESTING average score by prompt version\r\ncustomEvents\r\n| where isnotempty(tostring(customDimensions.topic)) and tostring(customDimensions.PromptTemplateVersion) == \"1.0.1\"\r\n| summarize [\"Sentiment Score\"]=round(avg(todecimal(customDimensions.questionSentiment)),2), [\"Fluency Score\"]=round(avg(todecimal(customDimensions.fluencyScore)),2),  [\"Confidence Score\"]=round(avg(todecimal(customDimensions.answerConfidence)),2) by Topic=tostring(customDimensions.topic)\r\n| where Topic in (\"flightSearch\",\"flightBookingComplete\",\"flightBooking\") \r\n| sort by Topic",
+              "size": 1,
+              "title": "Sentiment Score v=1.0.1",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "visualization": "tiles",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "Prompt",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 0,
+                    "options": {
+                      "style": "decimal"
+                    }
+                  }
+                },
+                "subtitleContent": {
+                  "columnMatch": "Topic"
+                },
+                "leftContent": {
+                  "columnMatch": "Sentiment Score",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                },
+                "showBorder": true
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Prompt",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "Sentiment Score",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "Sentiment Score",
+                "sizeAggregation": "Sum",
+                "legendMetric": "Sentiment Score",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "Sentiment Score",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "customWidth": "15",
+            "name": "query - 1 - Copy"
+          }
+        ]
+      },
+      "name": "group - 2"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customEvents\r\n| where isnotempty(tostring(customDimensions.topic)) and isnotempty(tostring(customDimensions.PromptTemplateVersion))\r\n| summarize \r\n    Totalv1 = countif(tostring(customDimensions.PromptTemplateVersion) == \"1.0.1\"),\r\n    TotalRequestioningv1 = countif(customDimensions.isRequestion == true and tostring(customDimensions.PromptTemplateVersion) == \"1.0.1\"), \r\n    Totalv0 = countif(tostring(customDimensions.PromptTemplateVersion) == \"1.0.0\"),\r\n    TotalRequestioningv0 = countif(customDimensions.isRequestion == true and tostring(customDimensions.PromptTemplateVersion) == \"1.0.0\") \r\n    by Topic=tostring(customDimensions.topic)\r\n| extend [\"Percentage 1.0.1\"] = iif(isnan(round((todouble(TotalRequestioningv1) / Totalv1 * 100), 2)),double(0),round((todouble(TotalRequestioningv1) / Totalv1 * 100), 2)), \r\n    [\"Percentage 1.0.0\"] = iif(isnan(round((todouble(TotalRequestioningv0) / Totalv1 * 100), 2)),double(0),round((todouble(TotalRequestioningv0) / Totalv0 * 100), 2)) \r\n| project Topic, [\"Percentage 1.0.1\"], [\"Percentage 1.0.0\"]",
+              "size": 1,
+              "title": "Requestioning % by Prompt Version",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Percentage 1.0.1",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "success",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Percentage 1.0.0",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "<",
+                          "thresholdValue": "1",
+                          "representation": "success",
+                          "text": "{0}{1}"
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "warning",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "customWidth": "35",
+            "name": "query - 0",
+            "styleSettings": {
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customEvents\r\n| where customDimensions.isRequestion == true \r\n| project Date=timestamp, Step=\"flightBookingComplete\", Conversation=operation_Name, [\"User Id\"]=new_guid(), [\"Prompt Version\"]=\"1.0.0\"\r\n| sort by Conversation asc\r\n| take 15",
+              "size": 1,
+              "title": "Sample Requestioning Messages",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            },
+            "customWidth": "65",
+            "name": "query - 1",
+            "styleSettings": {
+              "showBorder": true
+            }
+          }
+        ]
+      },
+      "name": "group - 2"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/2fe8a348-504a-4a5d-9df2-fd66a6c8db2e/resourceGroups/intelligent-apps/providers/microsoft.insights/components/intelligent-apps-ai"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
