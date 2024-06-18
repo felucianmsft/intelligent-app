@@ -23,4 +23,4 @@ What things you need to install the software and how to install them:
 git clone https://github.com/yourusername/langchain-project.git  
 cd langchain-project
 
-OpenAI API KEY: 7e31ae9effab477aa589243aa390e35d
+OpenAI API KEY: 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
