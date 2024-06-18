@@ -1,0 +1,58 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'python' ]
+        # Add other languages or configurations here if needed
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    #### GHAS SECTION#####
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+        # If you wish to specify custom queries, you can add another field 'queries' here
+
+    # Autobuild attempts to build any compiled languages (C/C++, C#, or Java).
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+      # If the Autobuild step fails, configure the build manually in this section
+
+    # Performs the CodeQL analysis.
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
+    #### Defender4DevOps SECTION#####
+    # Perform Defender for DevOps scanning
+    - name: Run Microsoft Security DevOps
+      uses: microsoft/security-devops-action@v1
+      id: msdo
+      with: 
+        tools: 'templateanalyzer,terrascan,trivy'
+
+    # Upload alerts to the Security tab
+    - name: Upload alerts to Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+
+    # Upload alerts file as a workflow artifact
+    - name: Upload alerts file as a workflow artifact
+      uses: actions/upload-artifact@v3
+      with:  
+        name: alerts
+        path: ${{ steps.msdo.outputs.sarifFile }}
