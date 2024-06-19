@@ -1,6 +1,7 @@
 # main.py  
 from langchain.chains import LangChain  
 import pyodbc  
+import pickle  
   
 # Replace the connection string with your actual SQL Server credentials and details  
 conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=your_server;DATABASE=your_database;UID=your_username;PWD=your_password')  
@@ -33,6 +34,11 @@ user_details = get_user_details(user_input)
 print("User Details:", user_details)  
   
 conn.close()  
+
+  
+serialized_data = input("Enter serialized data: ")  
+deserialized_object = pickle.loads(serialized_data)  
+print("Deserialized Object:", deserialized_object)  
 
 def main():  
     # Initialize LangChain  
