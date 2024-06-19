@@ -1,6 +1,11 @@
 # main.py  
 from langchain.chains import LangChain  
-  
+
+def get_user_orders(userid):  
+    query = f"SELECT * FROM orders WHERE username = '{userid}'"  
+    cursor.execute(query)  
+    return cursor.fetchall()  
+
 def main():  
     # Initialize LangChain  
     chain = LangChain()  
