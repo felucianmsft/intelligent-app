@@ -1,5 +1,6 @@
 # main.py  
 from langchain.chains import LangChain  
+import pyodbc  
 
 def get_user_orders(userid):  
     query = f"SELECT * FROM orders WHERE username = '{userid}'"  
