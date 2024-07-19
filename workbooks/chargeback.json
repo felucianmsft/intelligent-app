@@ -2,6 +2,58 @@
   "version": "Notebook/1.0",
   "items": [
     {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let sampleData = datatable(Subscription:string, ResourceGroup:string, Resource:string, SKU:string, Month2Date:int)  \r\n[  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT4-Turbo-ptu\", \"PTU\", 4700,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT3.5-Turbo-ptu\", \"PTU\", 3900,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT4-Turbo-fallback\", \"PAYG\", 20,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT3.5-Turbo-fallback\", \"PAYG\", 31  \r\n];  \r\nsampleData",
+        "size": 1,
+        "title": "All OpenAI Month-2-Date Costs",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "resourceType": "microsoft.insights/components",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Subscription",
+              "formatter": 1,
+              "formatOptions": {
+                "linkTarget": "ArmAction",
+                "linkIsContextBlade": true
+              }
+            },
+            {
+              "columnMatch": "Resource",
+              "formatter": 1,
+              "formatOptions": {
+                "linkColumn": "Resource",
+                "linkTarget": "ArmAction",
+                "linkIsContextBlade": true
+              }
+            },
+            {
+              "columnMatch": "Month2Date",
+              "formatter": 0,
+              "numberFormat": {
+                "unit": 0,
+                "options": {
+                  "currency": "USD",
+                  "style": "currency"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "customWidth": "95",
+      "name": "query - 2",
+      "styleSettings": {
+        "maxWidth": "95",
+        "showBorder": true
+      }
+    },
+    {
       "type": 12,
       "content": {
         "version": "NotebookGroup/1.0",
@@ -65,14 +117,42 @@
       "name": "group - 2"
     },
     {
-      "type": 3,
+      "type": 12,
       "content": {
-        "version": "KqlItem/1.0",
-        "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":\"{\\r\\n    \\\"type\\\": \\\"Usage\\\",\\r\\n    \\\"timeframe\\\": \\\"MonthToDate\\\",\\r\\n    \\\"dataset\\\": {\\r\\n      \\\"granularity\\\": \\\"None\\\",\\r\\n      \\\"aggregation\\\": {\\r\\n       \\\"totalCost\\\": {\\r\\n          \\\"name\\\": \\\"PreTaxCost\\\",\\r\\n          \\\"function\\\": \\\"Sum\\\"\\r\\n        }\\r\\n      },\\r\\n     \\\"grouping\\\": [\\r\\n        {\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"SubscriptionId\\\"\\r\\n        }\\r\\n      ]\\r\\n    }\\r\\n  }\",\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/2fe8a348-504a-4a5d-9df2-fd66a6c8db2e/providers/Microsoft.CostManagement/query?\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2019-11-01\"}],\"batchDisabled\":false,\"transformers\":null}",
-        "size": 0,
-        "queryType": 12
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":\"{\\r\\n    \\\"type\\\": \\\"Usage\\\",\\r\\n    \\\"timeframe\\\": \\\"MonthToDate\\\",\\r\\n    \\\"dataset\\\": {\\r\\n      \\\"granularity\\\": \\\"None\\\",\\r\\n      \\\"aggregation\\\": {\\r\\n       \\\"totalCost\\\": {\\r\\n          \\\"name\\\": \\\"PreTaxCost\\\",\\r\\n          \\\"function\\\": \\\"Sum\\\"\\r\\n        }\\r\\n      },\\r\\n     \\\"grouping\\\": [\\r\\n        {\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"SubscriptionId\\\"\\r\\n        }\\r\\n      ]\\r\\n    }\\r\\n  }\",\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/2fe8a348-504a-4a5d-9df2-fd66a6c8db2e/providers/Microsoft.CostManagement/query?\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2019-11-01\"}],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.properties\",\"columns\":[]}}]}",
+              "size": 0,
+              "queryType": 12
+            },
+            "customWidth": "45",
+            "name": "query - 1",
+            "styleSettings": {
+              "maxWidth": "45"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":\"{\\r\\n    \\\"type\\\": \\\"Usage\\\",\\r\\n    \\\"timeframe\\\": \\\"MonthToDate\\\",\\r\\n    \\\"dataset\\\": {\\r\\n    \\\"granularity\\\": \\\"None\\\",\\r\\n\\t\\r\\n\\t\\\"aggregation\\\": {\\r\\n       \\\"totalCost\\\": {\\r\\n          \\\"name\\\": \\\"PreTaxCost\\\",\\r\\n          \\\"function\\\": \\\"Sum\\\"\\r\\n        }\\r\\n      },\\r\\n     \\\"grouping\\\": [\\r\\n        {\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"SubscriptionName\\\"\\r\\n        },\\r\\n\\t\\t{\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"ResourceGroup\\\"\\r\\n        },\\r\\n\\t\\t{\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"ResourceType\\\"\\r\\n        }\\r\\n      ]\\r\\n    }\\r\\n  }\",\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/2fe8a348-504a-4a5d-9df2-fd66a6c8db2e/providers/Microsoft.CostManagement/query?\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2019-11-01\"}],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.properties\",\"columns\":[]}}]}",
+              "size": 0,
+              "queryType": 12
+            },
+            "customWidth": "45",
+            "name": "query - 1 - Copy",
+            "styleSettings": {
+              "maxWidth": "45"
+            }
+          }
+        ]
       },
-      "name": "query - 1"
+      "name": "group - 4"
     }
   ],
   "fallbackResourceIds": [
