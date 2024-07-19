@@ -65,7 +65,7 @@
               "version": "KqlItem/1.0",
               "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| sort by timestamp",
               "size": 3,
-              "title": "Token Usage by Business Unit - Last 24h",
+              "title": "GPT4 PTU -  Token Usage by Business Unit - Last 24h",
               "timeContext": {
                 "durationMs": 86400000
               },
@@ -73,10 +73,10 @@
               "resourceType": "microsoft.insights/components",
               "visualization": "piechart"
             },
-            "customWidth": "30",
+            "customWidth": "25",
             "name": "query - 2",
             "styleSettings": {
-              "maxWidth": "30",
+              "maxWidth": "25",
               "showBorder": true
             }
           },
@@ -84,8 +84,30 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by BusinessUnit=tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| project BusinessUnit, TotalTokens\r\n| sort by TotalTokens",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| sort by timestamp",
+              "size": 3,
+              "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 3",
+            "styleSettings": {
+              "maxWidth": "25",
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by BusinessUnit=tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| extend UsagePercentage = TotalTokens * 100.0 / toscalar(customMetrics | summarize sum(valueSum))  \r\n| project BusinessUnit, round(TotalTokens,2), round(UsagePercentage,2)  \r\n| sort by TotalTokens  ",
               "size": 0,
+              "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
               "timeContext": {
                 "durationMs": 86400000
               },
@@ -105,11 +127,33 @@
                         "style": "decimal"
                       }
                     }
+                  },
+                  {
+                    "columnMatch": "UsagePercentage",
+                    "formatter": 0,
+                    "numberFormat": {
+                      "unit": 1,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  }
+                ],
+                "sortBy": [
+                  {
+                    "itemKey": "$gen_bar_TotalTokens_1",
+                    "sortOrder": 2
                   }
                 ]
-              }
+              },
+              "sortBy": [
+                {
+                  "itemKey": "$gen_bar_TotalTokens_1",
+                  "sortOrder": 2
+                }
+              ]
             },
-            "customWidth": "50",
+            "customWidth": "45",
             "name": "query - 1"
           }
         ]
