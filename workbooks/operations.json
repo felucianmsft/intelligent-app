@@ -2,6 +2,58 @@
   "version": "Notebook/1.0",
   "items": [
     {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let sampleData = datatable(Subscription:string, ResourceGroup:string, Resource:string, SKU:string, Month2Date:int)  \r\n[  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT4-Turbo-ptu\", \"PTU\", 15700,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT3.5-Turbo-ptu\", \"PTU\", 14900,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT4-Turbo-fallback\", \"PAYG\", 284,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT3.5-Turbo-fallback\", \"PAYG\", 212  \r\n];  \r\nsampleData",
+        "size": 1,
+        "title": "All OpenAI Month-2-Date Costs",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "resourceType": "microsoft.insights/components",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Subscription",
+              "formatter": 1,
+              "formatOptions": {
+                "linkTarget": "ArmAction",
+                "linkIsContextBlade": true
+              }
+            },
+            {
+              "columnMatch": "Resource",
+              "formatter": 1,
+              "formatOptions": {
+                "linkColumn": "Resource",
+                "linkTarget": "ArmAction",
+                "linkIsContextBlade": true
+              }
+            },
+            {
+              "columnMatch": "Month2Date",
+              "formatter": 0,
+              "numberFormat": {
+                "unit": 0,
+                "options": {
+                  "currency": "USD",
+                  "style": "currency"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "customWidth": "95",
+      "name": "query - 2",
+      "styleSettings": {
+        "maxWidth": "95",
+        "showBorder": true
+      }
+    },
+    {
       "type": 12,
       "content": {
         "version": "NotebookGroup/1.0",
@@ -11,32 +63,20 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customEvents\r\n| summarize [\"Fluency Score\"]=round(avg(todecimal(customDimensions.fluencyScore)),2), [\"Sentiment Score\"]=round(avg(todecimal(customDimensions.questionSentiment)),2), [\"Confidence Score\"]=round(avg(todecimal(customDimensions.answerConfidence)),2) by bin(timestamp,1d)\r\n| render timechart with(title='Answer Scoring',ytitle=\"Score\",xtitle=\"Day\",ymax=1, xmax=0, ymin=0.1) ",
-              "size": 1,
-              "aggregation": 3,
-              "showAnnotations": true,
-              "title": "Answer Scoring",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| sort by timestamp",
+              "size": 3,
+              "title": "GPT4 PTU -  Token Usage by Business Unit - Last 24h",
               "timeContext": {
-                "durationMs": 604800000
+                "durationMs": 86400000
               },
               "queryType": 0,
               "resourceType": "microsoft.insights/components",
-              "chartSettings": {
-                "customThresholdLine": "0.8",
-                "customThresholdLineStyle": 1,
-                "xSettings": {
-                  "label": ""
-                },
-                "ySettings": {
-                  "min": 0.5,
-                  "max": 1,
-                  "label": "Score"
-                }
-              }
+              "visualization": "piechart"
             },
-            "customWidth": "30",
-            "name": "query - 0",
+            "customWidth": "25",
+            "name": "query - 2",
             "styleSettings": {
+              "maxWidth": "25",
               "showBorder": true
             }
           },
@@ -44,9 +84,30 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customEvents\r\n| where customDimensions.eventType == \"suggestion\"\r\n| project Date=timestamp, Sentiment=customDimensions.questionSentiment, [\"User Id\"]=user_Id, [\"Operation Id\"]=operation_Name\r\n| sort by todecimal(Sentiment) asc\r\n| take 5\r\n| render table  ",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\" \r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.BusinessUnitID)",
+              "size": 3,
+              "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 3",
+            "styleSettings": {
+              "maxWidth": "25",
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by BusinessUnit=tostring(customDimensions.BusinessUnitID)\r\n| extend UsagePercentage = TotalTokens * 100.0 / toscalar(customMetrics | summarize sum(valueSum))  \r\n| project BusinessUnit, round(TotalTokens,2), round(UsagePercentage,2)  \r\n| sort by TotalTokens  ",
               "size": 1,
-              "title": "Top 5 Lowest Sentiment Conversations",
+              "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
               "timeContext": {
                 "durationMs": 2592000000
               },
@@ -55,41 +116,86 @@
               "gridSettings": {
                 "formatters": [
                   {
-                    "columnMatch": "Date",
-                    "formatter": 0,
+                    "columnMatch": "TotalTokens",
+                    "formatter": 3,
                     "formatOptions": {
-                      "customColumnWidthSetting": "28ch"
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 17,
+                      "options": {
+                        "style": "decimal"
+                      }
                     }
                   },
                   {
-                    "columnMatch": "Sentiment",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "Default",
-                          "thresholdValue": null,
-                          "representation": "redBright",
-                          "text": "{0}{1}"
-                        }
-                      ]
+                    "columnMatch": "UsagePercentage",
+                    "formatter": 0,
+                    "numberFormat": {
+                      "unit": 1,
+                      "options": {
+                        "style": "decimal"
+                      }
                     }
                   }
                 ],
-                "rowLimit": 5
+                "sortBy": [
+                  {
+                    "itemKey": "$gen_bar_TotalTokens_1",
+                    "sortOrder": 2
+                  }
+                ]
               },
-              "sortBy": []
+              "sortBy": [
+                {
+                  "itemKey": "$gen_bar_TotalTokens_1",
+                  "sortOrder": 2
+                }
+              ]
             },
-            "customWidth": "55",
-            "name": "query - 1",
-            "styleSettings": {
-              "showBorder": true
-            }
+            "customWidth": "45",
+            "name": "query - 1"
           }
         ]
       },
-      "name": "group - 1"
+      "name": "group - 2"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| sort by timestamp",
+        "size": 1,
+        "title": "Tokens Usage By Business Unit Over Month",
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "queryType": 0,
+        "resourceType": "microsoft.insights/components",
+        "visualization": "linechart",
+        "graphSettings": {
+          "type": 0,
+          "topContent": {
+            "columnMatch": "customDimensions_BusinessUnitID",
+            "formatter": 1
+          },
+          "centerContent": {
+            "columnMatch": "TotalTokens",
+            "formatter": 1,
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        }
+      },
+      "name": "query - 4",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 12,
@@ -101,64 +207,102 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customEvents\r\n| where customDimensions.TotalTokens > 0\r\n| summarize TotalTokens=sum(toint(customDimensions.TotalTokens)), PromptTokens=sum(toint(customDimensions.PromptTokens)), CompletionTokens=sum(toint(customDimensions.CompletionTokens)) by operation_Name, bin(timestamp,1d)\r\n| summarize [\"Total Tokens\"]=round(avg(TotalTokens),2), [\"Prompt Tokens\"]=round(avg(PromptTokens),2), [\"Response Tokens\"]=round(avg(CompletionTokens),2) by bin(timestamp,1d)",
-              "size": 1,
-              "aggregation": 3,
-              "showAnnotations": true,
-              "title": "Avg Token Daily Token Usage",
-              "timeContext": {
-                "durationMs": 604800000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.insights/components",
-              "visualization": "timechart"
-            },
-            "customWidth": "30",
-            "name": "query - 0",
-            "styleSettings": {
-              "showBorder": true
-            }
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "customEvents\r\n| where customDimensions.TotalTokens > 0\r\n| project Date=timestamp, [\"Total Tokens\"]=toint(customDimensions.TotalTokens), [\"User Id\"]=user_Id, [\"Operation Id\"]=operation_Name\r\n| sort by [\"Total Tokens\"] desc \r\n| take 5",
-              "size": 1,
-              "title": "Top 5 Conversations by Token Usage",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.UserId) contains \",\") and tostring(customDimensions.UserId) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.UserId), bin(timestamp,24h)\r\n| sort by timestamp",
+              "size": 3,
+              "title": "GPT4 PTU -  Token Usage by User - Last 24h",
               "timeContext": {
                 "durationMs": 86400000
               },
               "queryType": 0,
               "resourceType": "microsoft.insights/components",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 2",
+            "styleSettings": {
+              "maxWidth": "25",
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.UserId) contains \",\") and tostring(customDimensions.UserId) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.UserId), bin(timestamp,30d)\r\n| sort by timestamp",
+              "size": 3,
+              "title": "GPT4 PTU - Token Usage by User - Last Month",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 3",
+            "styleSettings": {
+              "maxWidth": "25",
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.UserId) contains \",\") and tostring(customDimensions.UserId) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by User=tostring(customDimensions.UserId), bin(timestamp,30d)\r\n| extend UsagePercentage = TotalTokens * 100.0 / toscalar(customMetrics | summarize sum(valueSum))  \r\n| project User, round(TotalTokens,2), round(UsagePercentage,2)  \r\n| sort by TotalTokens  ",
+              "size": 0,
+              "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
               "gridSettings": {
                 "formatters": [
                   {
-                    "columnMatch": "Date",
-                    "formatter": 0,
+                    "columnMatch": "TotalTokens",
+                    "formatter": 3,
                     "formatOptions": {
-                      "customColumnWidthSetting": "28.5714ch"
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 17,
+                      "options": {
+                        "style": "decimal"
+                      }
                     }
                   },
                   {
-                    "columnMatch": "Total Tokens",
-                    "formatter": 8,
-                    "formatOptions": {
-                      "palette": "pink"
+                    "columnMatch": "UsagePercentage",
+                    "formatter": 0,
+                    "numberFormat": {
+                      "unit": 1,
+                      "options": {
+                        "style": "decimal"
+                      }
                     }
                   }
+                ],
+                "sortBy": [
+                  {
+                    "itemKey": "$gen_bar_TotalTokens_1",
+                    "sortOrder": 2
+                  }
                 ]
-              }
+              },
+              "sortBy": [
+                {
+                  "itemKey": "$gen_bar_TotalTokens_1",
+                  "sortOrder": 2
+                }
+              ]
             },
-            "customWidth": "55",
-            "name": "query - 1",
-            "styleSettings": {
-              "showBorder": true
-            }
+            "customWidth": "45",
+            "name": "query - 1"
           }
         ]
       },
-      "name": "group - 1"
+      "name": "group - 2 - Copy"
     },
     {
       "type": 12,
@@ -170,93 +314,33 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customEvents\r\n| where name == \"UserPrompt\"\r\n| summarize [\"Unique Conversations\"]=count_distinct(operation_Name)*103 by Date=bin(timestamp,1d)",
-              "size": 1,
-              "aggregation": 3,
-              "title": "Unique Daily Conversations",
-              "timeContext": {
-                "durationMs": 604800000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.insights/components",
-              "visualization": "timechart"
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":\"{\\r\\n    \\\"type\\\": \\\"Usage\\\",\\r\\n    \\\"timeframe\\\": \\\"MonthToDate\\\",\\r\\n    \\\"dataset\\\": {\\r\\n      \\\"granularity\\\": \\\"None\\\",\\r\\n      \\\"aggregation\\\": {\\r\\n       \\\"totalCost\\\": {\\r\\n          \\\"name\\\": \\\"PreTaxCost\\\",\\r\\n          \\\"function\\\": \\\"Sum\\\"\\r\\n        }\\r\\n      },\\r\\n     \\\"grouping\\\": [\\r\\n        {\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"SubscriptionId\\\"\\r\\n        }\\r\\n      ]\\r\\n    }\\r\\n  }\",\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/2fe8a348-504a-4a5d-9df2-fd66a6c8db2e/providers/Microsoft.CostManagement/query?\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2019-11-01\"}],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.properties\",\"columns\":[]}}]}",
+              "size": 0,
+              "queryType": 12
             },
-            "customWidth": "15",
-            "name": "query - 0",
+            "customWidth": "45",
+            "name": "query - 1",
             "styleSettings": {
-              "showBorder": true
+              "maxWidth": "45"
             }
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customEvents\r\n| where name == \"UserPrompt\"\r\n| project operation_Name, timestamp\r\n| summarize count_=count() by operation_Name, bin(timestamp,1d)\r\n| summarize Messages=round(avg(count_),2) by Date=bin(timestamp,1d)",
-              "size": 1,
-              "aggregation": 3,
-              "showAnnotations": true,
-              "title": "Avg Conversation Messages",
-              "timeContext": {
-                "durationMs": 604800000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.insights/components",
-              "visualization": "timechart"
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":\"{\\r\\n    \\\"type\\\": \\\"Usage\\\",\\r\\n    \\\"timeframe\\\": \\\"MonthToDate\\\",\\r\\n    \\\"dataset\\\": {\\r\\n    \\\"granularity\\\": \\\"None\\\",\\r\\n\\t\\r\\n\\t\\\"aggregation\\\": {\\r\\n       \\\"totalCost\\\": {\\r\\n          \\\"name\\\": \\\"PreTaxCost\\\",\\r\\n          \\\"function\\\": \\\"Sum\\\"\\r\\n        }\\r\\n      },\\r\\n     \\\"grouping\\\": [\\r\\n        {\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"SubscriptionName\\\"\\r\\n        },\\r\\n\\t\\t{\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"ResourceGroup\\\"\\r\\n        },\\r\\n\\t\\t{\\r\\n         \\\"type\\\": \\\"Dimension\\\",\\r\\n          \\\"name\\\": \\\"ResourceType\\\"\\r\\n        }\\r\\n      ]\\r\\n    }\\r\\n  }\",\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/2fe8a348-504a-4a5d-9df2-fd66a6c8db2e/providers/Microsoft.CostManagement/query?\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2019-11-01\"}],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.properties\",\"columns\":[]}}]}",
+              "size": 0,
+              "queryType": 12
             },
-            "customWidth": "15",
-            "name": "query - 3",
+            "customWidth": "45",
+            "name": "query - 1 - Copy",
             "styleSettings": {
-              "showBorder": true
-            }
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "customEvents\r\n| where name == \"UserPrompt\"\r\n| summarize count_=count() by operation_Name, timestamp, user_Id\r\n| project Date=timestamp, Messages=count_*rand(27), [\"User Id\"]=user_Id, [\"Operation Id\"]=operation_Name\r\n| sort by Messages desc\r\n| take 5",
-              "size": 1,
-              "title": "Top 5 Messages per Conversation  ",
-              "timeContext": {
-                "durationMs": 604800000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.insights/components",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "Date",
-                    "formatter": 0,
-                    "formatOptions": {
-                      "customColumnWidthSetting": "28.5714ch"
-                    }
-                  },
-                  {
-                    "columnMatch": "Messages",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "Default",
-                          "thresholdValue": null,
-                          "representation": "lightBlue",
-                          "text": "{0}{1}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            "customWidth": "55",
-            "name": "query - 2",
-            "styleSettings": {
-              "showBorder": true
+              "maxWidth": "45"
             }
           }
         ]
       },
-      "name": "group - 2"
+      "name": "group - 4"
     }
   ],
   "fallbackResourceIds": [
