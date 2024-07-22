@@ -5,7 +5,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "let sampleData = datatable(Subscription:string, ResourceGroup:string, Resource:string, SKU:string, Month2Date:int)  \r\n[  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT4-Turbo-ptu\", \"PTU\", 4700,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT3.5-Turbo-ptu\", \"PTU\", 3900,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT4-Turbo-fallback\", \"PAYG\", 20,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT3.5-Turbo-fallback\", \"PAYG\", 31  \r\n];  \r\nsampleData",
+        "query": "let sampleData = datatable(Subscription:string, ResourceGroup:string, Resource:string, SKU:string, Month2Date:int)  \r\n[  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT4-Turbo-ptu\", \"PTU\", 15700,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-hub\",\"GPT3.5-Turbo-ptu\", \"PTU\", 14900,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT4-Turbo-fallback\", \"PAYG\", 284,  \r\n    \"ME-MngEnvMCAP357957-felucian-1\",\"ai-fallback-payg\",\"GPT3.5-Turbo-fallback\", \"PAYG\", 212  \r\n];  \r\nsampleData",
         "size": 1,
         "title": "All OpenAI Month-2-Date Costs",
         "timeContext": {
@@ -84,11 +84,11 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| sort by timestamp",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\" \r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.BusinessUnitID)",
               "size": 3,
               "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
               "timeContext": {
-                "durationMs": 86400000
+                "durationMs": 2592000000
               },
               "queryType": 0,
               "resourceType": "microsoft.insights/components",
@@ -105,11 +105,11 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by BusinessUnit=tostring(customDimensions.BusinessUnitID), bin(timestamp,24h)\r\n| extend UsagePercentage = TotalTokens * 100.0 / toscalar(customMetrics | summarize sum(valueSum))  \r\n| project BusinessUnit, round(TotalTokens,2), round(UsagePercentage,2)  \r\n| sort by TotalTokens  ",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.BusinessUnitID) contains \",\") and tostring(customDimensions.BusinessUnitID) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by BusinessUnit=tostring(customDimensions.BusinessUnitID)\r\n| extend UsagePercentage = TotalTokens * 100.0 / toscalar(customMetrics | summarize sum(valueSum))  \r\n| project BusinessUnit, round(TotalTokens,2), round(UsagePercentage,2)  \r\n| sort by TotalTokens  ",
               "size": 0,
               "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
               "timeContext": {
-                "durationMs": 86400000
+                "durationMs": 2592000000
               },
               "queryType": 0,
               "resourceType": "microsoft.insights/components",
@@ -159,6 +159,113 @@
         ]
       },
       "name": "group - 2"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.UserId) contains \",\") and tostring(customDimensions.UserId) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.UserId), bin(timestamp,24h)\r\n| sort by timestamp",
+              "size": 3,
+              "title": "GPT4 PTU -  Token Usage by User - Last 24h",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 2",
+            "styleSettings": {
+              "maxWidth": "25",
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.UserId) contains \",\") and tostring(customDimensions.UserId) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by tostring(customDimensions.UserId), bin(timestamp,30d)\r\n| sort by timestamp",
+              "size": 3,
+              "title": "GPT4 PTU - Token Usage by User - Last Month",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 3",
+            "styleSettings": {
+              "maxWidth": "25",
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "customMetrics \r\n| where not(tostring(customDimensions.UserId) contains \",\") and tostring(customDimensions.UserId) != \"\"\r\n| summarize TotalTokens=sum(valueSum) by User=tostring(customDimensions.UserId), bin(timestamp,30d)\r\n| extend UsagePercentage = TotalTokens * 100.0 / toscalar(customMetrics | summarize sum(valueSum))  \r\n| project User, round(TotalTokens,2), round(UsagePercentage,2)  \r\n| sort by TotalTokens  ",
+              "size": 0,
+              "title": "GPT4 PTU - Token Usage by Business Unit - Last Month",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "TotalTokens",
+                    "formatter": 3,
+                    "formatOptions": {
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 17,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "UsagePercentage",
+                    "formatter": 0,
+                    "numberFormat": {
+                      "unit": 1,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  }
+                ],
+                "sortBy": [
+                  {
+                    "itemKey": "$gen_bar_TotalTokens_1",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "$gen_bar_TotalTokens_1",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "customWidth": "45",
+            "name": "query - 1"
+          }
+        ]
+      },
+      "name": "group - 2 - Copy"
     },
     {
       "type": 12,
